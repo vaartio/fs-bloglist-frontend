@@ -16,9 +16,9 @@ const UserBlogs = (props) => {
       <Togglable label="new blog" ref={props.toggleRef}>
         <h2>create new</h2>
         <AddBlogForm
-          newBlogTitle={props.newBlogTitle} setNewBlogTitle={props.setNewBlogTitle}
-          newBlogAuthor={props.newBlogAuthor} setNewBlogAuthor={props.setNewBlogAuthor}
-          newBlogUrl={props.newBlogUrl} setNewBlogUrl={props.setNewBlogUrl}
+          newBlogTitle={props.newBlogTitle}
+          newBlogAuthor={props.newBlogAuthor}
+          newBlogUrl={props.newBlogUrl}
           onSubmit={props.onCreateBlogClick} />
       </Togglable>
       <h2>user blogs</h2>

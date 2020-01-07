@@ -7,16 +7,17 @@ import Notification from './components/Notification'
 import Login from './components/Login'
 import UserBlogs from './components/UserBlogs'
 
-function App() {
+import { useField } from './hooks/index'
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+function App() {
+  const username = useField('text')
+  const password = useField('password')
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState(null)
   const [blogs, setBlogs] = useState([])
-  const [newBlogTitle, setNewBlogTitle] = useState('')
-  const [newBlogAuthor, setNewBlogAuthor] = useState('')
-  const [newBlogUrl, setNewBlogUrl] = useState('')
+  const newBlogTitle = useField('text')
+  const newBlogAuthor = useField('text')
+  const newBlogUrl = useField('text')
   const toggleRef = React.createRef()
 
   useEffect(() => {
@@ -46,22 +47,14 @@ function App() {
     }, 5000)
   }
 
-  const onUsernameChange = (event) => {
-    setUsername(event.target.value)
-  }
-
-  const onPasswordChange = (event) => {
-    setPassword(event.target.value)
-  }
-
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const loggedInUser = await login({ username, password })
+      const loggedInUser = await login({ username: username.value, password: password.value })
       window.localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser))
       setUser(loggedInUser)
-      setUsername('')
-      setPassword('')
+      username.reset()
+      password.reset()
     }
     catch (exception) {
       setNotification('login failed', 'error')
@@ -76,11 +69,14 @@ function App() {
 
   const handleCreateBlog = async (event, newBlog) => {
     event.preventDefault()
+    toggleRef.current.toggleVisibility()
     await blogService.create(newBlog)
     const initialBlogs = await blogService.getAll()
     setBlogs(initialBlogs)
     setNotification(`a new blog "${newBlog.title}" added!`)
-    toggleRef.current.toggleVisibility()
+    newBlogTitle.reset()
+    newBlogAuthor.reset()
+    newBlogUrl.reset()
   }
 
   const handleLike = async (event, blog) => {
@@ -111,16 +107,14 @@ function App() {
             <Login
               username={username}
               password={password}
-              onUsernameChange={onUsernameChange}
-              onPasswordChange={onPasswordChange}
               onSubmit={handleLogin} /> :
             <UserBlogs
               blogs={blogs}
               user={user}
               onLogoutClick={handleLogout}
-              newBlogTitle={newBlogTitle} setNewBlogTitle={setNewBlogTitle}
-              newBlogAuthor={newBlogAuthor} setNewBlogAuthor={setNewBlogAuthor}
-              newBlogUrl={newBlogUrl} setNewBlogUrl={setNewBlogUrl}
+              newBlogTitle={newBlogTitle}
+              newBlogAuthor={newBlogAuthor}
+              newBlogUrl={newBlogUrl}
               onCreateBlogClick={handleCreateBlog}
               toggleRef={toggleRef}
               onLike={handleLike}

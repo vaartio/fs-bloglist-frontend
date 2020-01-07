@@ -2,15 +2,15 @@ import React from 'react'
 
 const AddBlogForm = (props) => {
   return (
-    <form onSubmit={(event) => props.onSubmit(event, { title: props.newBlogTitle, author: props.newBlogAuthor, url: props.newBlogUrl })}>
+    <form onSubmit={(event) => props.onSubmit(event, { title: props.newBlogTitle.value, author: props.newBlogAuthor.value, url: props.newBlogUrl.value })}>
       <div>
-          title: <input value={props.newBlogTitle} onChange={(event) => props.setNewBlogTitle(event.target.value)} />
+          title: <input value={props.newBlogTitle.value} onChange={props.newBlogTitle.onChange} />
       </div>
       <div>
-          author: <input value={props.newBlogAuthor} onChange={(event) => props.setNewBlogAuthor(event.target.value)} />
+          author: <input value={props.newBlogAuthor.value} onChange={props.newBlogAuthor.onChange} />
       </div>
       <div>
-          url: <input value={props.newBlogUrl} onChange={(event) => props.setNewBlogUrl(event.target.value)} />
+          url: <input value={props.newBlogUrl.value} onChange={props.newBlogUrl.onChange} />
       </div>
       <button type="submit">create</button>
     </form>

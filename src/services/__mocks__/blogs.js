@@ -83,6 +83,7 @@ const getAll = () => {
   return Promise.resolve(blogs)
 }
 
+// eslint-disable-next-line no-unused-vars
 let token
 const setToken = newToken => {
   token = `bearer ${newToken}`

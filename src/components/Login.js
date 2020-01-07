@@ -9,18 +9,18 @@ const Login = (props) => {
           username
           <input
             type="text"
-            value={props.username}
+            value={props.username.value}
             name="Username"
-            onChange={props.onUsernameChange}
+            onChange={props.username.onChange}
           />
         </div>
         <div>
           password
           <input
             type="password"
-            value={props.password}
+            value={props.password.value}
             name="Password"
-            onChange={props.onPasswordChange}
+            onChange={props.password.onChange}
           />
         </div>
         <button type="submit">login</button>
