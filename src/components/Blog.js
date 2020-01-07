@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, onLikeClicked, onRemoveClicked, removeVisible }) => {
   const blogStyle = {
@@ -15,13 +16,13 @@ const Blog = ({ blog, onLikeClicked, onRemoveClicked, removeVisible }) => {
     setExpanded(!expanded)
   }
 
-  const CollapsedView = ({blog}) => (
+  const CollapsedView = ({ blog }) => (
     <div>
       {blog.title}, {blog.author}
     </div>
   )
 
-  const ExpandedView = ({blog}) => (
+  const ExpandedView = ({ blog }) => (
     <div>
       <p>
         {blog.title}, {blog.author}<br/>
@@ -40,14 +41,20 @@ const Blog = ({ blog, onLikeClicked, onRemoveClicked, removeVisible }) => {
 
   return (
     <div style={blogStyle} onClick={toggle}>
-    {
-      expanded === false ?
-      <CollapsedView blog={blog} />
-      :
-      <ExpandedView blog={blog} />
-    }
+      {
+        expanded === false ?
+          <CollapsedView blog={blog} />
+          :
+          <ExpandedView blog={blog} />
+      }
     </div>
   )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  onLikeClicked: PropTypes.func.isRequired,
+  onRemoveClicked: PropTypes.func.isRequired,
 }
 
 export default Blog

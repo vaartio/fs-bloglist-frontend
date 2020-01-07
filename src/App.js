@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 
-import login from './services/login' 
+import login from './services/login'
 import blogService from './services/blogs'
 
 import Notification from './components/Notification'
@@ -64,7 +64,7 @@ function App() {
       setPassword('')
     }
     catch (exception) {
-      setNotification(`login failed`, 'error')
+      setNotification('login failed', 'error')
     }
   }
 
@@ -94,7 +94,7 @@ function App() {
 
   const handleRemove = async (event, blog) => {
     event.preventDefault()
-    if (window.confirm(`remove blog "${blog.title}" by ${blog.author}?`)) { 
+    if (window.confirm(`remove blog "${blog.title}" by ${blog.author}?`)) {
       await blogService.remove(blog.id)
       const initialBlogs = await blogService.getAll()
       setBlogs(initialBlogs)
@@ -106,29 +106,29 @@ function App() {
     <div className="App">
       <Notification message={message} />
       <header className="App-header">
-      {
-        user === null ?
-        <Login
-          username={username}
-          password={password}
-          onUsernameChange={onUsernameChange}
-          onPasswordChange={onPasswordChange}
-          onSubmit={handleLogin} /> :
-        <UserBlogs
-          blogs={blogs}
-          user={user}
-          onLogoutClick={handleLogout}
-          newBlogTitle={newBlogTitle} setNewBlogTitle={setNewBlogTitle}
-          newBlogAuthor={newBlogAuthor} setNewBlogAuthor={setNewBlogAuthor}
-          newBlogUrl={newBlogUrl} setNewBlogUrl={setNewBlogUrl}
-          onCreateBlogClick={handleCreateBlog}
-          toggleRef={toggleRef}
-          onLike={handleLike}
-          onRemove={handleRemove} />
-      }
+        {
+          user === null ?
+            <Login
+              username={username}
+              password={password}
+              onUsernameChange={onUsernameChange}
+              onPasswordChange={onPasswordChange}
+              onSubmit={handleLogin} /> :
+            <UserBlogs
+              blogs={blogs}
+              user={user}
+              onLogoutClick={handleLogout}
+              newBlogTitle={newBlogTitle} setNewBlogTitle={setNewBlogTitle}
+              newBlogAuthor={newBlogAuthor} setNewBlogAuthor={setNewBlogAuthor}
+              newBlogUrl={newBlogUrl} setNewBlogUrl={setNewBlogUrl}
+              onCreateBlogClick={handleCreateBlog}
+              toggleRef={toggleRef}
+              onLike={handleLike}
+              onRemove={handleRemove} />
+        }
       </header>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

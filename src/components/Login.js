@@ -1,13 +1,13 @@
 import React from 'react'
 
 const Login = (props) => {
-    return (
+  return (
       <>
       <h2>Log to application</h2>
       <form onSubmit={props.onSubmit}>
         <div>
           username
-            <input
+          <input
             type="text"
             value={props.username}
             name="Username"
@@ -16,7 +16,7 @@ const Login = (props) => {
         </div>
         <div>
           password
-            <input
+          <input
             type="password"
             value={props.password}
             name="Password"
@@ -26,7 +26,7 @@ const Login = (props) => {
         <button type="submit">login</button>
       </form>
       </>
-    )
-  }
+  )
+}
 
-  export default Login
+export default Login
