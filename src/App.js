@@ -17,6 +17,7 @@ function App() {
   const [newBlogTitle, setNewBlogTitle] = useState('')
   const [newBlogAuthor, setNewBlogAuthor] = useState('')
   const [newBlogUrl, setNewBlogUrl] = useState('')
+  const toggleRef = React.createRef()
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -79,6 +80,26 @@ function App() {
     const initialBlogs = await blogService.getAll()
     setBlogs(initialBlogs)
     setNotification(`a new blog "${newBlog.title}" added!`)
+    toggleRef.current.toggleVisibility()
+  }
+
+  const handleLike = async (event, blog) => {
+    event.preventDefault()
+    const updatedBlog = { ...blog, likes: blog.likes + 1 }
+    await blogService.update(updatedBlog.id, updatedBlog)
+    const initialBlogs = await blogService.getAll()
+    setBlogs(initialBlogs)
+    setNotification(`you liked a blog "${updatedBlog.title}"!`)
+  }
+
+  const handleRemove = async (event, blog) => {
+    event.preventDefault()
+    if (window.confirm(`remove blog "${blog.title}" by ${blog.author}?`)) { 
+      await blogService.remove(blog.id)
+      const initialBlogs = await blogService.getAll()
+      setBlogs(initialBlogs)
+      setNotification(`you removed blog "${blog.title}" by ${blog.author}`)
+    }
   }
 
   return (
@@ -100,7 +121,10 @@ function App() {
           newBlogTitle={newBlogTitle} setNewBlogTitle={setNewBlogTitle}
           newBlogAuthor={newBlogAuthor} setNewBlogAuthor={setNewBlogAuthor}
           newBlogUrl={newBlogUrl} setNewBlogUrl={setNewBlogUrl}
-          onCreateBlogClick={handleCreateBlog} />
+          onCreateBlogClick={handleCreateBlog}
+          toggleRef={toggleRef}
+          onLike={handleLike}
+          onRemove={handleRemove} />
       }
       </header>
     </div>
