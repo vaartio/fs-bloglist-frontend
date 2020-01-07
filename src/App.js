@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 import login from './services/login' 
 import blogService from './services/blogs'
-import Notification from './components/Notification'
-import Blog from './components/Blog'
 
-//import logo from './logo.svg';
-//import './App.css';
+import Notification from './components/Notification'
+import Login from './components/Login'
+import UserBlogs from './components/UserBlogs'
 
 function App() {
 
@@ -15,6 +14,9 @@ function App() {
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState(null)
   const [blogs, setBlogs] = useState([])
+  const [newBlogTitle, setNewBlogTitle] = useState('')
+  const [newBlogAuthor, setNewBlogAuthor] = useState('')
+  const [newBlogUrl, setNewBlogUrl] = useState('')
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -43,6 +45,14 @@ function App() {
     }, 5000)
   }
 
+  const onUsernameChange = (event) => {
+    setUsername(event.target.value)
+  }
+
+  const onPasswordChange = (event) => {
+    setPassword(event.target.value)
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -57,46 +67,18 @@ function App() {
     }
   }
 
-  const BlogsView = (props) => {
-    const userBlogs = props.blogs.filter(blog => blog.user.username === props.user.username)
-    return (
-      <div>
-        <h2>blogs</h2>
-        <p>{user.name} logged in</p>
-        {userBlogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
-        )}
-      </div>
-    )
+  const handleLogout = (event) => {
+    event.preventDefault()
+    window.localStorage.removeItem('loggedInUser')
+    setUser(null)
   }
 
-  const LoginView = (props) => {
-    return (
-      <>
-      <h2>Log to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-            <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-            <input
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
-      </>
-    )
+  const handleCreateBlog = async (event, newBlog) => {
+    event.preventDefault()
+    await blogService.create(newBlog)
+    const initialBlogs = await blogService.getAll()
+    setBlogs(initialBlogs)
+    setNotification(`a new blog "${newBlog.title}" added!`)
   }
 
   return (
@@ -104,7 +86,21 @@ function App() {
       <Notification message={message} />
       <header className="App-header">
       {
-        user === null ? <LoginView /> : <BlogsView blogs={blogs} user={user} />
+        user === null ?
+        <Login
+          username={username}
+          password={password}
+          onUsernameChange={onUsernameChange}
+          onPasswordChange={onPasswordChange}
+          onSubmit={handleLogin} /> :
+        <UserBlogs
+          blogs={blogs}
+          user={user}
+          onLogoutClick={handleLogout}
+          newBlogTitle={newBlogTitle} setNewBlogTitle={setNewBlogTitle}
+          newBlogAuthor={newBlogAuthor} setNewBlogAuthor={setNewBlogAuthor}
+          newBlogUrl={newBlogUrl} setNewBlogUrl={setNewBlogUrl}
+          onCreateBlogClick={handleCreateBlog} />
       }
       </header>
     </div>
