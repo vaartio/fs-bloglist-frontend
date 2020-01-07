@@ -40,7 +40,7 @@ const Blog = ({ blog, onLikeClicked, onRemoveClicked, removeVisible }) => {
   )
 
   return (
-    <div style={blogStyle} onClick={toggle}>
+    <div className="blog" style={blogStyle} onClick={toggle}>
       {
         expanded === false ?
           <CollapsedView blog={blog} />
