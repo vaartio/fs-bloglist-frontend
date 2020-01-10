@@ -1,5 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { blogLike, blogRemove } from '../reducers/blogReducer'
+import { setNotification } from '../reducers/noficationReducer'
 
 import LogoutButton from './LogoutButton'
 import Blog from './Blog'
@@ -7,38 +10,56 @@ import AddBlogForm from './AddBlogForm'
 import Togglable from './Togglable'
 
 const UserBlogs = (props) => {
+  const toggleRef = React.createRef()
+  const likeClicked = async (blog) => {
+    props.blogLike(blog)
+    props.setNotification(`you liked a blog "${blog.title}"!`)
+  }
+  const removeClicked = async (blog) => {
+    if (window.confirm(`remove blog "${blog.title}" by ${blog.author}? (${blog.id})`)) {
+      props.blogRemove(blog)
+      setNotification(`you removed blog "${blog.title}" by ${blog.author}`)
+    }
+  }
+
   const userBlogs = props.blogs.filter(blog => blog.user.username === props.user.username)
   const otherBlogs = props.blogs.filter(blog => blog.user.username !== props.user.username)
   return (
     <div>
       <h2>blogs</h2>
       <p>{props.user.name} logged in {<LogoutButton onClick={props.onLogoutClick} />}</p>
-      <Togglable label="new blog" ref={props.toggleRef}>
+      <Togglable label="new blog" ref={toggleRef}>
         <h2>create new</h2>
-        <AddBlogForm
-          newBlogTitle={props.newBlogTitle}
-          newBlogAuthor={props.newBlogAuthor}
-          newBlogUrl={props.newBlogUrl}
-          onSubmit={props.onCreateBlogClick} />
+        <AddBlogForm toggle={toggleRef} />
       </Togglable>
       <h2>user blogs</h2>
-      {userBlogs.sort((a, b) => (a.likes > b.likes) ? -1 : 1).map(blog =>
-        <Blog key={blog.id} blog={blog} onLikeClicked={props.onLike} onRemoveClicked={props.onRemove} removeVisible={true} />
+      {userBlogs.map(blog =>
+        <Blog key={blog.id} blog={blog} onLikeClicked={() => likeClicked(blog)} onRemoveClicked={() => removeClicked(blog)} removeVisible={true} />
       )}
       <h2>blogs of other users</h2>
-      {otherBlogs.sort((a, b) => (a.likes > b.likes) ? -1 : 1).map(blog =>
-        <Blog key={blog.id} blog={blog} onLikeClicked={props.onLike} onRemoveClicked={props.onRemove} removeVisible={false} />
+      {otherBlogs.map(blog =>
+        <Blog key={blog.id} blog={blog} onLikeClicked={() => likeClicked(blog)} onRemoveClicked={() => removeClicked(blog)} removeVisible={false} />
       )}
     </div>
   )
 }
 
 UserBlogs.propTypes = {
-  blogs: PropTypes.array.isRequired,
   onLogoutClick: PropTypes.func.isRequired,
-  onCreateBlogClick: PropTypes.func.isRequired,
-  onLike: PropTypes.func.isRequired,
-  onRemove: PropTypes.func.isRequired,
 }
 
-export default UserBlogs
+const sortBlogs = (blogs) => blogs.sort((a, b) => (a.likes > b.likes) ? -1 : 1)
+
+const mapStateToProps = (state) => {
+  return {
+      blogs: sortBlogs(state.blogs),
+  }
+}
+
+const mapDispatchToProps = {
+  blogLike,
+  blogRemove,
+  setNotification,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserBlogs)

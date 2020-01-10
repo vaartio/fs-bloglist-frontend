@@ -1,20 +1,38 @@
 import React from 'react'
+import { connect } from 'react-redux'
+
+import { blogCreate } from '../reducers/blogReducer'
+import { setNotification } from '../reducers/noficationReducer'
 
 const AddBlogForm = (props) => {
+
+  const createBlog = async (event) => {
+    event.preventDefault()
+    const title = event.target.title.value
+    const author = event.target.author.value
+    const url = event.target.url.value
+    props.toggle.current.toggleVisibility()
+    event.target.title.value = ''
+    event.target.author.value = ''
+    event.target.url.value = ''
+    props.blogCreate({ title, author, url })
+    props.setNotification(`a new blog "${title}" added!`)
+  }
+
   return (
-    <form onSubmit={(event) => props.onSubmit(event, { title: props.newBlogTitle.value, author: props.newBlogAuthor.value, url: props.newBlogUrl.value })}>
+    <form onSubmit={createBlog}>
       <div>
-          title: <input value={props.newBlogTitle.value} onChange={props.newBlogTitle.onChange} />
+          title: <input name="title" />
       </div>
       <div>
-          author: <input value={props.newBlogAuthor.value} onChange={props.newBlogAuthor.onChange} />
+          author: <input name="author" />
       </div>
       <div>
-          url: <input value={props.newBlogUrl.value} onChange={props.newBlogUrl.onChange} />
+          url: <input name="url" />
       </div>
       <button type="submit">create</button>
     </form>
   )
 }
 
-export default AddBlogForm
+export default connect(null, { blogCreate, setNotification })(AddBlogForm)

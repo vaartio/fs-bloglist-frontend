@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
 
+import { setNotification } from './reducers/noficationReducer'
+import { initializeBlogs } from './reducers/blogReducer'
+
+import { useField } from './hooks/index'
 import login from './services/login'
 import blogService from './services/blogs'
 
@@ -7,26 +12,16 @@ import Notification from './components/Notification'
 import Login from './components/Login'
 import UserBlogs from './components/UserBlogs'
 
-import { useField } from './hooks/index'
 
-function App() {
+
+function App({ setNotification, initializeBlogs }) {
+  useEffect(() => {
+    initializeBlogs()
+  },[])
+
   const username = useField('text')
   const password = useField('password')
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState(null)
-  const [blogs, setBlogs] = useState([])
-  const newBlogTitle = useField('text')
-  const newBlogAuthor = useField('text')
-  const newBlogUrl = useField('text')
-  const toggleRef = React.createRef()
-
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      const initialBlogs = await blogService.getAll()
-      setBlogs(initialBlogs)
-    }
-    fetchBlogs()
-  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedInUser')
@@ -36,16 +31,6 @@ function App() {
       blogService.setToken(user.token)
     }
   }, [])
-
-  const setNotification = (message, type = 'info') => {
-    setMessage({
-      message: message,
-      type: type,
-    })
-    setTimeout(() => {
-      setMessage(null)
-    }, 5000)
-  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -57,7 +42,7 @@ function App() {
       password.reset()
     }
     catch (exception) {
-      setNotification('login failed', 'error')
+      setNotification('login failed', 5, 'error')
     }
   }
 
@@ -67,40 +52,9 @@ function App() {
     setUser(null)
   }
 
-  const handleCreateBlog = async (event, newBlog) => {
-    event.preventDefault()
-    toggleRef.current.toggleVisibility()
-    await blogService.create(newBlog)
-    const initialBlogs = await blogService.getAll()
-    setBlogs(initialBlogs)
-    setNotification(`a new blog "${newBlog.title}" added!`)
-    newBlogTitle.reset()
-    newBlogAuthor.reset()
-    newBlogUrl.reset()
-  }
-
-  const handleLike = async (event, blog) => {
-    event.preventDefault()
-    const updatedBlog = { ...blog, likes: blog.likes + 1 }
-    await blogService.update(updatedBlog.id, updatedBlog)
-    const initialBlogs = await blogService.getAll()
-    setBlogs(initialBlogs)
-    setNotification(`you liked a blog "${updatedBlog.title}"!`)
-  }
-
-  const handleRemove = async (event, blog) => {
-    event.preventDefault()
-    if (window.confirm(`remove blog "${blog.title}" by ${blog.author}?`)) {
-      await blogService.remove(blog.id)
-      const initialBlogs = await blogService.getAll()
-      setBlogs(initialBlogs)
-      setNotification(`you removed blog "${blog.title}" by ${blog.author}`)
-    }
-  }
-
   return (
     <div className="App">
-      <Notification message={message} />
+      <Notification />
       <header className="App-header">
         {
           user === null ?
@@ -109,20 +63,13 @@ function App() {
               password={password}
               onSubmit={handleLogin} /> :
             <UserBlogs
-              blogs={blogs}
               user={user}
               onLogoutClick={handleLogout}
-              newBlogTitle={newBlogTitle}
-              newBlogAuthor={newBlogAuthor}
-              newBlogUrl={newBlogUrl}
-              onCreateBlogClick={handleCreateBlog}
-              toggleRef={toggleRef}
-              onLike={handleLike}
-              onRemove={handleRemove} />
+            />
         }
       </header>
     </div>
   )
 }
 
-export default App
+export default connect(null, { setNotification, initializeBlogs })(App)

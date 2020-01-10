@@ -2,6 +2,8 @@ import axios from 'axios'
 const baseUrl = '/api/blogs'
 let token = null
 
+const getId = () => (100000 * Math.random()).toFixed(0)
+
 const setToken = newToken => {
   token = `bearer ${newToken}`
 }
@@ -12,7 +14,7 @@ const getAll = async () => {
 }
 
 const create = async newBlog => {
-  const response = await axios.post(baseUrl, newBlog, {
+  const response = await axios.post(baseUrl, { ...newBlog, id: getId() }, {
     headers: { Authorization: token },
   })
   return response.data

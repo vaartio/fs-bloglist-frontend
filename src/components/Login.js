@@ -30,3 +30,4 @@ const Login = (props) => {
 }
 
 export default Login
+//export default connect(null, { blogCreate, setNotification })(Login)
