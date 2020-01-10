@@ -20,7 +20,7 @@ const UserBlogs = (props) => {
       setNotification(`you removed blog "${blog.title}" by ${blog.author}`)
     }
   }
-console.log(props.blogs)
+
   const userBlogs = props.blogs.filter(blog => blog.user.username === props.user.username)
   const otherBlogs = props.blogs.filter(blog => blog.user.username !== props.user.username)
 
