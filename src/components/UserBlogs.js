@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { blogLike, blogRemove } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/noficationReducer'
@@ -16,18 +15,19 @@ const UserBlogs = (props) => {
     props.setNotification(`you liked a blog "${blog.title}"!`)
   }
   const removeClicked = async (blog) => {
-    if (window.confirm(`remove blog "${blog.title}" by ${blog.author}? (${blog.id})`)) {
+    if (window.confirm(`remove blog "${blog.title}" by ${blog.author}?`)) {
       props.blogRemove(blog)
       setNotification(`you removed blog "${blog.title}" by ${blog.author}`)
     }
   }
-
+console.log(props.blogs)
   const userBlogs = props.blogs.filter(blog => blog.user.username === props.user.username)
   const otherBlogs = props.blogs.filter(blog => blog.user.username !== props.user.username)
+
   return (
     <div>
       <h2>blogs</h2>
-      <p>{props.user.name} logged in {<LogoutButton onClick={props.onLogoutClick} />}</p>
+      <p>{props.user.name} logged in {<LogoutButton />}</p>
       <Togglable label="new blog" ref={toggleRef}>
         <h2>create new</h2>
         <AddBlogForm toggle={toggleRef} />
@@ -44,15 +44,12 @@ const UserBlogs = (props) => {
   )
 }
 
-UserBlogs.propTypes = {
-  onLogoutClick: PropTypes.func.isRequired,
-}
-
 const sortBlogs = (blogs) => blogs.sort((a, b) => (a.likes > b.likes) ? -1 : 1)
 
 const mapStateToProps = (state) => {
   return {
       blogs: sortBlogs(state.blogs),
+      user: state.user,
   }
 }
 

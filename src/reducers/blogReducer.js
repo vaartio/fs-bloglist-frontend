@@ -35,7 +35,7 @@ export const initializeBlogs = () => {
 export const blogLike = object => {
   return async dispatch => {
     const blog = {...object, likes: object.likes + 1 }
-    await blogService.update(blog.id, blog)
+    await blogService.update(blog.id, {})
     dispatch({
       type: ACTION_LIKE_BLOG,
       data: blog,

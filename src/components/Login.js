@@ -1,27 +1,29 @@
 import React from 'react'
+import { connect } from 'react-redux'
+
+import { login } from '../reducers/userReducer'
 
 const Login = (props) => {
+  const loginClick = async (event) => {
+    event.preventDefault()
+    const username = event.target.username.value
+    const password = event.target.password.value
+    event.target.username.value = ''
+    event.target.password.value = ''
+    props.login(username, password)
+  }
+
   return (
       <>
       <h2>Log to application</h2>
-      <form onSubmit={props.onSubmit}>
+      <form onSubmit={loginClick}>
         <div>
           username
-          <input
-            type="text"
-            value={props.username.value}
-            name="Username"
-            onChange={props.username.onChange}
-          />
+          <input type="text" name="username" />
         </div>
         <div>
           password
-          <input
-            type="password"
-            value={props.password.value}
-            name="Password"
-            onChange={props.password.onChange}
-          />
+          <input type="password" name="password" />
         </div>
         <button type="submit">login</button>
       </form>
@@ -29,5 +31,4 @@ const Login = (props) => {
   )
 }
 
-export default Login
-//export default connect(null, { blogCreate, setNotification })(Login)
+export default connect(null, { login })(Login)
